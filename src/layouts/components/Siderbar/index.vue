@@ -2,12 +2,13 @@
     <el-scrollbar wrap-class="scrollbar-wrapper">
         <el-menu 
             :default-active="activeMenu"
+            :collapse="isCollapse"
             :background-color="variables.menuBg"
             :unique-opened="true"
             :text-color="variables.menuText"
             :active-text-color="variables.menuActiveText"
             mode="vertical" 
-            :collapse-transition="true"
+            :collapse-transition="false"
             class="el-menu-vertical">
             <!-- :--active-color="variables.menuActiveText" -->
             <!-- :background-color="variables.menuBg" -->
@@ -27,7 +28,10 @@ import SidebarItem from "./SidebarItem.vue";
 import { routes } from '@/router'
 import { computed } from "@vue/reactivity";
 import { useRoute } from "vue-router";
-console.log('variables :>> ', variables);
+
+import { defaultStore } from 'stores/default.js'
+import { storeToRefs } from "pinia";
+
 // 当前激活菜单
 const activeMenu = computed(() => {
   const route = useRoute();
@@ -35,9 +39,13 @@ const activeMenu = computed(() => {
   if (meta.activeMenu) {
     return meta.activeMenu;
   }
-  console.log('path',path)
   return path;
 });
+
+const dstore = defaultStore() 
+const { sidebar } = storeToRefs(dstore)
+
+const isCollapse = sidebar.value.opened;
 
 </script>
 

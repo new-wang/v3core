@@ -4,7 +4,7 @@
             <transition name="fade-transform" mode="out-in">
                 <component :is="Component" />
             </transition>
-    </router-view>
+        </router-view>
     </section>
 </template>
 

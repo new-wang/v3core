@@ -12,8 +12,11 @@ import router from './router'
 // 全局样式
 import 'styles/index.scss'
 
-const app = createApp(App)
+// icon
+import elementPlusIcon from './plugins/elementPlusIcon'
 
+const app = createApp(App)
+elementPlusIcon(app)
 app.use(createPinia())
 app.use(router)
 app.use(ElementPlus)
