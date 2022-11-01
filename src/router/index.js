@@ -10,7 +10,13 @@ import HomeView from '../views/HomeView.vue'
 /**
  * Note: 子菜单仅当路由的children.length >=1 才显示
  * 
- * hidden ：Boolear 
+ * hidden ：false                  if set true, item will not show in the sidebar(default is false)     sidebar
+ * redirect: noRedirect            if set noRedirect will no redirect in the breadcrumb                 breadcrumb
+ * meta:{
+ *    title: 'title'               the name show in sidebar and breadcrumb (recommend set)              breadcrumb sidebar
+ *   icon: 'svg-name'              the icon show in the sidebar                                         sidebar
+ *    breadcrumb: false            if set false, the item will hidden in breadcrumb(default is true)    breadcrumb
+ * }
  */
 export const routes = [
   {
@@ -18,12 +24,13 @@ export const routes = [
     redirect:'/home',
     component: Layout,
     meta:{
-      title:'',
+      title:'首页',
       icon:''
     },
     children:[
       {
         path:'home',
+        name:'home',
         component: ()=> import('views/HomeView.vue')
       }
     ]

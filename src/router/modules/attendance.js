@@ -4,6 +4,7 @@ const attendanceRouter = {
     path:'/attendance',
     component: Layout,
     name:"考勤模块",
+    redirect: 'noRedirect',
     meta:{
       title:'考勤模块',
       icon:'Edit'
@@ -11,7 +12,7 @@ const attendanceRouter = {
     children:[
         {
           path:'users',
-          name:'人员管理',
+          name:'attendanceUser',
           meta:{
             title:'人员管理'
           },
@@ -19,7 +20,7 @@ const attendanceRouter = {
         },
         {
           path:'department',
-          name:'部门管理',
+          name:'attendanceDepartment',
           meta:{
             title:'部门管理'
           },
@@ -27,7 +28,7 @@ const attendanceRouter = {
         },
         {
           path:'salary',
-          name:'工资管理',
+          name:'attendanceSalary',
           meta:{
             title:'工资管理'
           },
