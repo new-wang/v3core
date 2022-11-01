@@ -1,5 +1,9 @@
 <template>
-    <i v-if="icon" class="sub-el-icon" :class="icon"></i>
+    <el-icon v-if="icon" class="sub-el-icon" :class="icon">
+        <component :is="icon">
+        </component>
+    </el-icon>
+
     <span v-if="title">{{ title }}</span>
 </template>
 

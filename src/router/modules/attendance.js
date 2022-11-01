@@ -5,7 +5,8 @@ const attendanceRouter = {
     component: Layout,
     name:"考勤模块",
     meta:{
-      title:'考勤模块'
+      title:'考勤模块',
+      icon:'Edit'
     },
     children:[
         {

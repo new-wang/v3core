@@ -156,9 +156,9 @@
 
     }
   
-    // .el-menu--collapse .el-menu .el-submenu {
-    //   min-width: $sideBarWidth !important;
-    // }
+    .el-menu--collapse .el-menu .el-sub-menu {
+      min-width: $sideBarWidth !important;
+    }
   
     // mobile responsive
     // .mobile {
@@ -200,7 +200,7 @@
   //     }
   //   }
   
-  //   .nest-menu .el-submenu > .el-submenu__title,
+  //   .nest-menu .el-sub-menu > .el-sub-menu__title,
   //   .el-menu-item {
   //     &:hover {
   //       // you can use $subMenuHover

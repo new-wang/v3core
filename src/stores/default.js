@@ -9,8 +9,7 @@ export const defaultStore = defineStore('app', {
   }),
   actions:{
     toggleSideBar() {
-      this.sidebar.opened = !this.sidebar.opened;
-      
+        this.sidebar.opened = !this.sidebar.opened;
     },
   },
 })

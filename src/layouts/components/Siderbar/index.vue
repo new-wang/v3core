@@ -45,8 +45,7 @@ const activeMenu = computed(() => {
 const dstore = defaultStore() 
 const { sidebar } = storeToRefs(dstore)
 
-const isCollapse = sidebar.value.opened;
-
+const isCollapse = computed(()=>!sidebar.value.opened);
 </script>
 
 <style lang="scss" scoped>
