@@ -7,14 +7,15 @@ const attendanceRouter = {
     redirect: 'noRedirect',
     meta:{
       title:'考勤模块',
-      icon:'Edit'
+      icon:'Edit',
     },
     children:[
         {
           path:'users',
           name:'attendanceUser',
           meta:{
-            title:'人员管理'
+            title:'人员管理',
+            affix:false
           },
           component:() => import('views/wages/user.vue')
         },

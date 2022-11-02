@@ -9,6 +9,8 @@
         <div class="main-container">
             <!-- 顶部导航栏 -->
             <navbar></navbar>
+            
+            <tags-view></tags-view>
 
             <!-- 内容区 -->
             <app-main></app-main>
@@ -19,6 +21,7 @@
 <script setup>
 import AppMain from 'layouts/components/AppMain.vue'
 import Navbar from 'layouts/components/Navbar.vue'
+import TagsView from 'layouts/components/TagsView/index.vue'
 import Sidebar from 'layouts/components/Siderbar/index.vue'
 import { reactive } from 'vue';
 import { defaultStore } from 'stores/default.js'

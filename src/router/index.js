@@ -14,11 +14,23 @@ import HomeView from '../views/HomeView.vue'
  * redirect: noRedirect            if set noRedirect will no redirect in the breadcrumb                 breadcrumb
  * meta:{
  *    title: 'title'               the name show in sidebar and breadcrumb (recommend set)              breadcrumb sidebar
- *   icon: 'svg-name'              the icon show in the sidebar                                         sidebar
+ *    icon: 'svg-name'             the icon show in the sidebar                                         sidebar
  *    breadcrumb: false            if set false, the item will hidden in breadcrumb(default is true)    breadcrumb
+ *    affix: true                  if set true, the tag will affix in the tags-view                     tags-view
  * }
  */
 export const routes = [
+  {
+    path: '/redirect',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/redirect/:path(.*)',
+        component: () => import('@/views/redirect/index.vue')
+      }
+    ]
+  },
   {
     path: '/',
     redirect:'/home',

@@ -3,6 +3,8 @@
         <hamburger class="hamburger-container" :is-active="sidebar.opened" @toggleClick="toggleSideBar"></hamburger>
 
         <breadcrumb class="breadcrumb-container" />
+
+        
     </div>
 </template>
 
