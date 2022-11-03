@@ -40,9 +40,9 @@ const toLastView = (visitedViews,view)=>{
     }else{
         if(view.name === 'home'){
             // reload home page
-            // router.replace({
-            //     path:'/redirect' + view.fullPath
-            // })
+            router.replace({
+                path:'/redirect' + view.fullPath
+            })
         }else{
             router.push('/')
         }
