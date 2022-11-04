@@ -1,60 +1,70 @@
+<!--
+ * @Description:
+ * @Author: WX
+ * @Date: 2022-11-04 14:46
+ * @LastEditors: WX
+ * @LastEditTime: 2022-11-04 17:52
+-->
 <template>
-    <div id="tags-view-container" class="tags-view-container" ref="tagref">
-        <el-scrollbar class="tags-view-wrapper">
-            <el-tag v-for="tag in visitedViews"
-            :key="tag.name"
-            :closable ="!isAffix(tag)?true:false"
-            class="mx-1 tags-view-item" 
-            :class="isActive(tag)?'active':''"
-            :type="isActive(tag)?'':'info'"
-            @click="toRoute(tag)"
-            @contextmenu.prevent.native="openMenu(tag,$event)"
-            @close="!isAffix(tag)?closeSelectedTag(tag):''"
-            >
-            <!-- @click.right.native = "openMenu" -->
+    <div id="tags-view-container" class="tags-view-container" ref="tagContainerRef">
+        <scroll-pane class="tags-view-wrapper" ref="scrollPaneRef">
+            <el-tag v-for="tag in visitedViews" :key="tag.name" :closable="!isAffix(tag) ? true : false"
+                class="mx-1 tags-view-item" :class="isActive(tag) ? 'active' : ''" :type="isActive(tag) ? '' : 'info'"
+                @click="toRoute(tag)" @contextmenu.prevent.native="openMenu(tag, $event)"
+                @close="!isAffix(tag) ? closeSelectedTag(tag) : ''" :ref="setTagRef" :to="tag">
+                <!-- @click.right.native = "openMenu" -->
                 {{ tag.title }}
             </el-tag>
-        </el-scrollbar>
-
-        <ul v-show="menu.visible" :style="{left:menu.left+'px',top:menu.top+'px'}" class="contextmenu">
-            <li>刷新</li>
-            <li>关闭当前</li>
-            <li>关闭其他</li>
+        </scroll-pane>
+        <ul v-show="menu.visible" :style="{ left: menu.left + 'px', top: menu.top + 'px' }" class="contextmenu">
+            <li @click="refreshSelectedTag(menu.selectedTag)">刷新</li>
+            <li v-if="!isAffix(menu.selectedTag)" @click="closeSelectedTag(menu.selectedTag)">关闭当前</li>
+            <li @click="closeOthersTags">关闭其他</li>
             <li>全部关闭</li>
         </ul>
-
     </div>
 </template>
 
 <script setup>
+import ScrollPane from './ScrollPane.vue'
 import { tagsViewStore } from 'stores/tagsView.js'
 import { permissionStore } from 'stores/permission.js'
-import { computed, watch, reactive,ref, onMounted } from 'vue';
+import { computed, watch, reactive, ref, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import path from 'path';
+
+// import { getCurrentInstance } from 'vue'; 
+// let { proxy } = getCurrentInstance()
+// 获取当前组件实例 tagContainerRef.value  proxy.$el
 
 const route = useRoute()
 const router = useRouter()
 const permitStore = permissionStore()
 const tagsStore = tagsViewStore()
-const visitedViews = computed(()=>tagsStore.visitedViews)
-const permitRoutes = computed(()=>permitStore.routes)
+const visitedViews = computed(() => tagsStore.visitedViews)
+const permitRoutes = computed(() => permitStore.routes)
 const isActive = (croute) => croute.path === route.path
 const isAffix = (tag) => tag.meta && tag.meta.affix
-const tagref = ref(null)
+const tagContainerRef = ref(null)
+const tagRefs = []
+const setTagRef = (el) => {
+    tagRefs.push(el)
+}
+
+const scrollPaneRef = ref(null)
 
 const menu = reactive({
-    visible:false,
-    left:0,
-    top:0,
+    visible: false,
+    left: 0,
+    top: 0,
     selectedTag: {}
 })
 
-const openMenu = (tag,e)=>{
+const openMenu = (tag, e) => {
     menu.visible = true
     const menuMinWidth = 105
-    const offsetLeft = tagref.value.getBoundingClientRect().left // container margin left
-    const offsetWidth = tagref.value.offsetWidth // container width
+    const offsetLeft = tagContainerRef.value.getBoundingClientRect().left // container margin left
+    const offsetWidth = tagContainerRef.value.offsetWidth // container width
     const maxLeft = offsetWidth - menuMinWidth // left boundary
     const left = e.clientX - offsetLeft + 15 // 15: margin right
     if (left > maxLeft) {
@@ -66,64 +76,103 @@ const openMenu = (tag,e)=>{
     menu.visible = true
     menu.selectedTag = tag
 }
+const closeMenu = () => {
+    menu.visible = false
+}
 
+const refreshSelectedTag = async (view) => {
+    await tagsStore.delCachedView(view)
+    const { fullPath } = view
+    nextTick(() => {
+        router.replace({
+            path: '/redirect' + fullPath
+        }).catch(err => {
+            console.warn(err)
+        })
+    })
+}
 
-const toLastView = (visitedViews,view)=>{
+const moveToCurrentTag = () => {
+    nextTick(() => {
+        for (const tag of tagRefs) {
+            const { to } = tag.$attrs
+            if (to.path === route.path) {
+                console.log('tagContainerRef :>> ', tagContainerRef.value);
+                console.log('scrollPaneRef :>> ', scrollPaneRef.value);
+                // scrollPaneRef.value.moveToTarget(tag)
+                // when query is different then update
+                if (to.fullPath !== route.fullPath) {
+                    tagsStore.updateVisitedView(route)
+                }
+                break
+            }
+        }
+    })
+}
+
+const closeOthersTags = async () => {
+    router.push(menu.selectedTag)
+    await tagsStore.delOthersView(menu.selectedTag)
+    moveToCurrentTag()
+}
+
+const toLastView = (visitedViews, view) => {
     const latestView = visitedViews.slice(-1)[0]
-    if(latestView){
+    if (latestView) {
         toRoute(latestView)
-    }else{
-        if(view.name === 'home'){
+    } else {
+        if (view.name === 'home') {
             // reload home page
             router.replace({
-                path:'/redirect' + view.fullPath
+                path: '/redirect' + view.fullPath
             })
-        }else{
+        } else {
             router.push('/')
         }
     }
 }
 
-const closeSelectedTag = (tagview)=>{
-    tagsStore.delView(tagview).then(({ visitedViews })=>{
-        if(isActive(tagview)){
-            toLastView(visitedViews,tagview)
+const closeSelectedTag = (tagview) => {
+    tagsStore.delView(tagview).then(({ visitedViews }) => {
+        if (isActive(tagview)) {
+            toLastView(visitedViews, tagview)
         }
     })
 }
-const addTags = ()=>{
-    const { name }  = route
-    if(name){
+const addTags = () => {
+    const { name } = route
+    if (name) {
         tagsStore.addView(route)
     }
 }
-const handleTag = ()=>{
+const handleTag = () => {
     addTags()
+    moveToCurrentTag()
 }
-const filterAffixTags = (routes,basepath)=>{
+const filterAffixTags = (routes, basepath) => {
     let tags = []
     routes.forEach(proute => {
-        if(proute.meta && proute.meta.affix){
-            const tagPath = path.resolve(basepath,proute.path)
+        if (proute.meta && proute.meta.affix) {
+            const tagPath = path.resolve(basepath, proute.path)
             tags.push(
                 {
-                    fullPath:tagPath,
-                    path:tagPath,
-                    name:proute.name,
-                    meta:{ ...proute.meta }
+                    fullPath: tagPath,
+                    path: tagPath,
+                    name: proute.name,
+                    meta: { ...proute.meta }
                 }
             )
         }
-        if(proute.children){
-            const tempTags = filterAffixTags(proute.children,proute.path)
-            if(tempTags.length >=1){
+        if (proute.children) {
+            const tempTags = filterAffixTags(proute.children, proute.path)
+            if (tempTags.length >= 1) {
                 tags = [...tags, ...tempTags]
             }
         }
     })
     return tags
 }
-const initTags = ()=>{
+const initTags = () => {
     const affixTags = filterAffixTags(permitRoutes.value)
     for (const tag of affixTags) {
         // Must have tag name
@@ -132,27 +181,35 @@ const initTags = ()=>{
         }
     }
 }
-const isCurrent = (tag)=>{
+const isCurrent = (tag) => {
     const current = router.currentRoute.value
     return tag.path === current.path
 }
-const toRoute = (tag)=>{
-    if(isCurrent(tag)) return
+const toRoute = (tag) => {
+    if (isCurrent(tag)) return
     router.push({
-        fullpath:tag.fullPath,
-        path:tag.path,
-        name:tag.name,
+        fullpath: tag.fullPath,
+        path: tag.path,
+        name: tag.name,
         query: {
-          ...tag.query,
+            ...tag.query,
         },
-        params:{
+        params: {
             ...tag.params
         }
     })
 }
 initTags()
 addTags()
-watch(route,handleTag)
+watch(route, handleTag)
+
+watch(() => menu.visible, (value) => {
+    if (value) {
+        document.body.addEventListener('click', closeMenu)
+    } else {
+        document.body.removeEventListener('click', closeMenu)
+    }
+})
 </script>
 
 <style lang="scss" scoped>
@@ -162,26 +219,30 @@ watch(route,handleTag)
     background: #fff;
     border-bottom: 1px solid #d8dce5;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12), 0 0 3px 0 rgba(0, 0, 0, .04);
-    .tags-view-wrapper{
-        .tags-view-item{
+    .tags-view-wrapper {
+        .tags-view-item {
             display: inline-block;
             position: relative;
             cursor: pointer;
             height: 26px;
             line-height: 26px;
             margin-top: 4px;
+
             &:first-of-type {
                 margin-left: 15px;
             }
+
             &:last-of-type {
                 margin-right: 15px;
             }
         }
     }
+
     .mx-1 {
         margin: 0 0.25rem;
     }
-    .contextmenu{
+
+    .contextmenu {
         margin: 0;
         background: #fff;
         z-index: 3000;
@@ -193,10 +254,12 @@ watch(route,handleTag)
         font-weight: 400;
         color: #333;
         box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, .3);
+
         li {
             margin: 0;
             padding: 7px 16px;
             cursor: pointer;
+
             &:hover {
                 background: #eee;
             }
