@@ -3,7 +3,7 @@
  * @Author: WX
  * @Date: 2022-11-07 14:25
  * @LastEditors: ZY
- * @LastEditTime: 2021-11-07 16:50
+ * @LastEditTime: 2021-11-07 14:25
 -->
 <template>
     <el-scrollbar ref="scrollContainer" :vertical="false" class="scroll-container" @wheel.native.prevent="handleScroll">
@@ -35,7 +35,7 @@ const emitScroll = () => {
 const moveToTarget = (currentTag) => {
     const container = proxy.$el;
     const containerWidth = container.offsetWidth;
-    const tagList = proxy.$parent.$refs.tag;
+    const tagList = proxy.$parent.tagRefs;
     let firstTag = null
     let lastTag = null
 
@@ -53,6 +53,8 @@ const moveToTarget = (currentTag) => {
         const currentIndex = tagList.findIndex(item => item === currentTag)
         const prevTag = tagList[currentIndex - 1]
         const nextTag = tagList[currentIndex + 1]
+        
+        if(!nextTag || !prevTag) return
 
         // the tag's offsetLeft after of nextTag
         const afterNextTagOffsetLeft = nextTag.$el.offsetLeft + nextTag.$el.offsetWidth + tagAndTagSpacing

@@ -1,43 +1,42 @@
 <!--
- * @Description:
+ * @Description: 使用el-tag 定义标签
  * @Author: WX
  * @Date: 2022-11-04 14:46
  * @LastEditors: WX
- * @LastEditTime: 2022-11-07 16:50
+ * @LastEditTime: 2022-11-07 16:51
 -->
 <template>
     <div id="tags-view-container" class="tags-view-container" ref="tagContainerRef">
         <scroll-pane class="tags-view-wrapper" ref="scrollPaneRef">
-            <router-link v-for="tag in visitedViews" ref="tag" :key="tag.path" :class="isActive(tag) ? 'active' : ''"
-                :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }" tag="span" class="tags-view-item mx-1"
-                @click.middle="!isAffix(tag) ? closeSelectedTag(tag) : ''" @contextmenu.prevent="openMenu(tag, $event)">
-                {{ tag.meta.title }}
-                <el-icon v-if="!isAffix(tag)" class="el-icon-close">
-                    <Close @click.prevent.stop="closeSelectedTag(tag)" />
-                </el-icon>
-            </router-link>
+            <el-tag v-for="tag in visitedViews" :key="tag.name" :closable="!isAffix(tag) ? true : false"
+                class="mx-1 tags-view-item" :class="isActive(tag) ? 'active' : ''" :type="isActive(tag) ? '' : 'info'"
+                @click="toRoute(tag)" @contextmenu.prevent.native="openMenu(tag, $event)"
+                @close="!isAffix(tag) ? closeSelectedTag(tag) : ''" :ref="setTagRef" :to="tag">
+               <!-- @click.right.native = "openMenu"  -->
+                {{ tag.title }}
+            </el-tag>
         </scroll-pane>
         <ul v-show="menu.visible" :style="{ left: menu.left + 'px', top: menu.top + 'px' }" class="contextmenu">
             <li @click="refreshSelectedTag(menu.selectedTag)">刷新</li>
             <li v-if="!isAffix(menu.selectedTag)" @click="closeSelectedTag(menu.selectedTag)">关闭当前</li>
             <li @click="closeOthersTags">关闭其他</li>
-            <li @click="closeAllTags(menu.selectedTag)">全部关闭</li>
+            <li>全部关闭</li>
         </ul>
     </div>
 </template>
 
 <script setup>
-import ScrollPane from './ScrollPane.vue'
+import ScrollPane from './ScrollPaneForEl.vue'
 import { tagsViewStore } from 'stores/tagsView.js'
 import { permissionStore } from 'stores/permission.js'
 import { computed, watch, reactive, ref, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import path from 'path';
 
-import { getCurrentInstance } from 'vue';
-let { proxy } = getCurrentInstance()
+// import { getCurrentInstance } from 'vue'; 
+// let { proxy } = getCurrentInstance()
 // 获取当前组件实例 tagContainerRef.value  proxy.$el
-console.log('proxy :>> ', proxy);
+
 const route = useRoute()
 const router = useRouter()
 const permitStore = permissionStore()
@@ -47,6 +46,15 @@ const permitRoutes = computed(() => permitStore.routes)
 const isActive = (croute) => croute.path === route.path
 const isAffix = (tag) => tag.meta && tag.meta.affix
 const tagContainerRef = ref(null)
+const tagRefs = []
+const setTagRef = (el) => {
+    if(!tagRefs.includes(el)){
+        tagRefs.push(el)
+    }
+}
+nextTick(()=>{
+    console.log('tagRefs11 :>> ', tagRefs);
+})
 const scrollPaneRef = ref(null)
 
 const menu = reactive({
@@ -89,13 +97,13 @@ const refreshSelectedTag = async (view) => {
 }
 
 const moveToCurrentTag = () => {
-    const tags = proxy.$refs.tag
     nextTick(() => {
-        if (tags === null || tags === undefined || !Array.isArray(tags)) {
+        if(tagRefs === null || tagRefs === undefined || !Array.isArray(tagRefs)){
             return;
         }
-        for (const tag of tags) {
-            const { to } = tag
+        for (const tag of tagRefs) {
+            if(!tag) return
+            const { to } = tag.$attrs
             if (to.path === route.path) {
                 scrollPaneRef.value.moveToTarget(tag)
                 // when query is different then update
@@ -113,15 +121,6 @@ const closeOthersTags = async () => {
     router.push(menu.selectedTag)
     await tagsStore.delOthersView(menu.selectedTag)
     moveToCurrentTag()
-}
-
-const closeAllTags = async (view) => {
-    const { visitedViews } = await tagsStore.delAllViews()
-    const affixTags = filterAffixTags(permitRoutes.value)
-    if (affixTags.some(tag => tag.path === view.path)) {
-        return
-    }
-    toLastView(visitedViews, view)
 }
 
 const toLastView = (visitedViews, view) => {
@@ -208,6 +207,9 @@ const toRoute = (tag) => {
     })
 }
 
+defineExpose({
+    tagRefs
+})
 initTags()
 addTags()
 watch(route, handleTag)
@@ -228,22 +230,13 @@ watch(() => menu.visible, (value) => {
     background: #fff;
     border-bottom: 1px solid #d8dce5;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12), 0 0 3px 0 rgba(0, 0, 0, .04);
-
     .tags-view-wrapper {
         .tags-view-item {
             display: inline-block;
-            text-decoration: none;
             position: relative;
             cursor: pointer;
             height: 26px;
             line-height: 26px;
-            border: 1px solid #d8dce5;
-            border-radius: 3px;
-            color: #495060;
-            background: #fff;
-            padding: 0 8px;
-            font-size: 12px;
-            margin-left: 5px;
             margin-top: 4px;
 
             &:first-of-type {
@@ -252,44 +245,6 @@ watch(() => menu.visible, (value) => {
 
             &:last-of-type {
                 margin-right: 15px;
-            }
-
-            &.active {
-                background-color: #58c1e4f3;
-                color: #fff;
-                border-color: #58c1e4f3;
-
-                &::before {
-                    content: '';
-                    background: #fff;
-                    display: inline-block;
-                    width: 8px;
-                    height: 8px;
-                    border-radius: 50%;
-                    position: relative;
-                    margin-right: 2px;
-                }
-            }
-
-            .el-icon-close {
-                width: 16px;
-                height: 16px;
-                vertical-align: -1px;
-                border-radius: 50%;
-                text-align: center;
-                transition: all .3s cubic-bezier(.645, .045, .355, 1);
-                transform-origin: 100% 50%;
-
-                &:before {
-                    transform: scale(.6);
-                    display: inline-block;
-                    vertical-align: -3px;
-                }
-
-                &:hover {
-                    background-color: #b4bccc;
-                    color: #fff;
-                }
             }
         }
     }

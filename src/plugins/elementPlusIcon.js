@@ -3,10 +3,11 @@
 // for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 //     app.component(key, component)
 // }
-import { Expand,Fold,Edit } from '@element-plus/icons-vue'
+import { Expand,Fold,Edit,Close } from '@element-plus/icons-vue'
 
 export default function(app){
     app.component('Expand',Expand)
     app.component('Fold',Fold)
     app.component('Edit',Edit)
+    app.component('Close',Close)
 }
