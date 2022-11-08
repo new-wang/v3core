@@ -32,6 +32,11 @@ export const routes = [
     ]
   },
   {
+    path: '/login',
+    component: () => import('@/views/login/login.vue'),
+    hidden: true
+  },
+  {
     path: '/',
     redirect:'/home',
     component: Layout,

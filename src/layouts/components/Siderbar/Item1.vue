@@ -1,11 +1,10 @@
 <!--
- * @Description: 使用render 
- * @Author: WX
- * @Date: 2022-11-07 11:25
- * @LastEditors: WX
- * @LastEditTime: 2022-11-07 11:28
+ * @Author: new-wang
+ * @Date: 2022-11-07 09:43:12
+ * @LastEditors: new-wang
+ * @LastEditTime: 2022-11-08 10:41:01
+ * @Description: 使用render
 -->
-
 <script>
 import { h,resolveComponent } from 'vue'
 export default {

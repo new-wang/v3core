@@ -1,10 +1,11 @@
 <!--
- * @Description:
- * @Author: WX
- * @Date: 2022-11-04 14:46
- * @LastEditors: WX
- * @LastEditTime: 2022-11-07 16:50
+ * @Author: new-wang
+ * @Date: 2022-11-07 15:45:03
+ * @LastEditors: new-wang
+ * @LastEditTime: 2022-11-08 10:42:22
+ * @Description: 标签页
 -->
+
 <template>
     <div id="tags-view-container" class="tags-view-container" ref="tagContainerRef">
         <scroll-pane class="tags-view-wrapper" ref="scrollPaneRef">

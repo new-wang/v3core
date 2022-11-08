@@ -1,3 +1,11 @@
+<!--
+ * @Author: new-wang
+ * @Date: 2022-10-25 10:43:36
+ * @LastEditors: new-wang
+ * @LastEditTime: 2022-11-08 10:46:41
+ * @Description: 顶部导航
+-->
+
 <template>
     <div class="navbar">
         <hamburger class="hamburger-container" :is-active="sidebar.opened" @toggleClick="toggleSideBar"></hamburger>

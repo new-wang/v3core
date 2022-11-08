@@ -1,3 +1,11 @@
+<!--
+ * @Author: new-wang
+ * @Date: 2022-10-31 15:21:34
+ * @LastEditors: new-wang
+ * @LastEditTime: 2022-11-08 10:43:41
+ * @Description: 面包屑导航
+-->
+
 <template>
     <el-breadcrumb class="app-breadcrumb" separator="/">
         <transition-group name="breadcrumb">

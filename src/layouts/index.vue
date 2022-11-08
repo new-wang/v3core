@@ -1,3 +1,11 @@
+<!--
+ * @Author: new-wang
+ * @Date: 2022-10-25 10:38:30
+ * @LastEditors: new-wang
+ * @LastEditTime: 2022-11-08 10:47:31
+ * @Description: 
+-->
+
 <template>
     <div class="app-wrapper" :class="classObj">
         

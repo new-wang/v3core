@@ -1,10 +1,11 @@
 <!--
- * @Description:
- * @Author: WX
- * @Date: 2022-11-07 14:25
- * @LastEditors: ZY
- * @LastEditTime: 2021-11-07 16:50
+ * @Author: new-wang
+ * @Date: 2022-11-07 15:48:48
+ * @LastEditors: new-wang
+ * @LastEditTime: 2022-11-08 10:42:53
+ * @Description: 
 -->
+
 <template>
     <el-scrollbar ref="scrollContainer" :vertical="false" class="scroll-container" @wheel.native.prevent="handleScroll">
         <slot />

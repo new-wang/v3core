@@ -1,3 +1,11 @@
+<!--
+ * @Author: new-wang
+ * @Date: 2022-11-02 17:33:03
+ * @LastEditors: new-wang
+ * @LastEditTime: 2022-11-08 10:40:04
+ * @Description: 重定向
+-->
+
 <!-- <script setup>
 import { created,render, h } from 'vue'
 import { useRoute,useRouter } from 'vue-router';

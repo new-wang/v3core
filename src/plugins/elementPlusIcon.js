@@ -1,3 +1,11 @@
+/*
+ * @Author: new-wang
+ * @Date: 2022-10-31 14:51:58
+ * @LastEditors: new-wang
+ * @LastEditTime: 2022-11-08 10:47:09
+ * @Description: element 图标
+ */
+
 // 全局引入
 // import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 // for (const [key, component] of Object.entries(ElementPlusIconsVue)) {

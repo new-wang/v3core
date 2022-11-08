@@ -1,9 +1,10 @@
 <!--
+ * @Author: new-wang
+ * @Date: 2022-11-01 18:02:41
+ * @LastEditors: new-wang
+ * @LastEditTime: 2022-11-08 10:45:30
  * @Description: 使用el-tag 定义标签
- * @Author: WX
- * @Date: 2022-11-04 14:46
- * @LastEditors: WX
- * @LastEditTime: 2022-11-07 16:51
+ * @otherbug: tagRefs 会一直push
 -->
 <template>
     <div id="tags-view-container" class="tags-view-container" ref="tagContainerRef">

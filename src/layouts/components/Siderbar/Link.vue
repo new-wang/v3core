@@ -1,3 +1,11 @@
+<!--
+ * @Author: new-wang
+ * @Date: 2022-10-26 14:13:35
+ * @LastEditors: new-wang
+ * @LastEditTime: 2022-11-08 10:42:02
+ * @Description: 
+-->
+
 <template>
   <component :is="type" v-bind="linkProps(to)">
     <slot />
