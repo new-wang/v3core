@@ -2,7 +2,7 @@
  * @Author: new-wang
  * @Date: 2022-11-07 16:57:48
  * @LastEditors: new-wang
- * @LastEditTime: 2022-11-08 17:56:56
+ * @LastEditTime: 2022-11-09 16:25:06
  * @Description: 登录页
 -->
 
@@ -21,19 +21,15 @@
                     <!-- <div class="login-logo">
                         logo
                     </div> -->
-                    <el-form size="large" ref = "formRef" :rules = "rules" :model="form" class="login-form">
+                    <el-form size="large" ref="formRef" :rules="rules" :model="form" class="login-form">
                         <el-form-item label="" prop="userName">
-                            <el-input prefix-icon ="User" v-model="form.userName" placeholder="用户名"></el-input>
+                            <el-input prefix-icon="User" v-model="form.userName" placeholder="用户名"></el-input>
                         </el-form-item>
                         <el-form-item prop="password">
-                            <el-input 
-                                prefix-icon ="Lock"  
-                                v-model="form.password"
-                                :type="passwordType" 
-                                placeholder="密码">
+                            <el-input prefix-icon="Lock" v-model="form.password" :type="passwordType" placeholder="密码">
                                 <template #suffix>
-                                    <el-icon class="el-input__icon" @click.native = "showPwd">
-                                        <component :is="passwordType==='password'?'Hide':'View'"></component>
+                                    <el-icon class="el-input__icon" @click.native="showPwd">
+                                        <component :is="passwordType === 'password' ? 'Hide' : 'View'"></component>
                                     </el-icon>
                                 </template>
                             </el-input>
@@ -46,7 +42,12 @@
                                 <img :src="codeImg" alt="" @click="changeVerify">
                             </el-col>
                         </el-form-item>
-
+                        <el-form-item>
+                            <el-button type="primary" style="width:80%;margin: 0 auto;"
+                                @click.native.prevent="handleLogin">
+                                登录
+                            </el-button>
+                        </el-form-item>
                     </el-form>
                 </div>
             </div>
@@ -63,15 +64,15 @@ import { onMounted, reactive, ref } from 'vue';
 
 const formRef = ref()
 const codeImg = ref(null)
-const changeVerify = ()=>{
+const changeVerify = () => {
     const time = new Date().getTime();
     form.time = time;
     codeImg.value = 'https://ksserver.shandongkunshang.com:8095' + '/verify/getVerify?time=' + form.time
 }
 const passwordType = ref('password')
 
-const showPwd = ()=>{
-    passwordType.value === 'password' ? passwordType.value='': passwordType.value = 'password'
+const showPwd = () => {
+    passwordType.value === 'password' ? passwordType.value = '' : passwordType.value = 'password'
 }
 
 const form = reactive({
@@ -82,34 +83,55 @@ const form = reactive({
     corporationId: null
 })
 
+// const checkCode = (rule, value, callback) => {
+//     if(value && value !== '123'){
+//         callback(new Error('验证码不一致'))
+//     }else{
+//         callback()
+//     }
+// }
 const rules = reactive({
     userName: [
         { required: true, message: '请输入用户名', trigger: 'blur' },
         // { min: 3, max: 5, message: 'Length should be 3 to 5', trigger: 'blur' },
     ],
-    password:{
+    password: {
         required: true, message: '请输入密码', trigger: 'blur'
     },
-    validateCode:{
-        required: true, message: '请输入验证码', trigger: 'blur'
-    }
+    validateCode: [
+        // {
+        //     validator: checkCode, trigger: 'blur'
+        // },
+        {
+            required: true, message: '请输入验证码', trigger: 'blur',
+        }
+    ]
 })
+const handleLogin = () => {
+    formRef.value.validate(valid => {
+        if (valid) {
+            console.log('valid :>> ', '验证通过');
+        }
+    })
+}
 
-onMounted(()=>{
+onMounted(() => {
     codeImg.value = 'https://ksserver.shandongkunshang.com:8095' + '/verify/getVerify?time=' + form.time
 })
 </script>
 
 <style lang="scss" scoped>
-.login-container{
+.login-container {
     background: rgb(132, 188, 248);
     // background-image: url(https://hongguishanglv.com/img/login_s.2f930fa9.png);
     background-repeat: no-repeat;
     background-position: left center;
-    
+
     height: 100%;
     min-height: 460px;
-    .login-box{
+    min-width: 800px;
+
+    .login-box {
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -118,21 +140,25 @@ onMounted(()=>{
         // align-items: flex-end;
         box-sizing: border-box;
         padding: 20px;
+
         // background: #fff;
-        .login-box-header{
+        .login-box-header {
             background: #fff;
             text-align: right;
         }
-        .login-wrapper{
+
+        .login-wrapper {
             // background: rgba($color: #fff, $alpha:.2);
             height: 80%;
             width: 80%;
+            max-width: 1000px;
             min-height: 400px;
             min-width: 800px;
             align-self: center;
             display: flex;
             justify-content: space-between;
-            .login-img-describe{
+
+            .login-img-describe {
                 width: 50%;
                 background: url("assets/images/loginBg.png") no-repeat;
                 background-size: cover;
@@ -140,28 +166,38 @@ onMounted(()=>{
                 opacity: .8;
                 border-radius: 10px 0 0 10px;
             }
-            .login-body{
-                background: rgba($color: #fff, $alpha:.5);
+
+            .login-body {
+                background: rgba($color: #fff, $alpha: .5);
                 width: 50%;
                 border-radius: 0 10px 10px 0;
-                .login-logo{
+
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-content: center;
+
+                .login-logo {
                     background: #fff;
                     height: 80px;
                 }
-                .login-form{
+
+                .login-form {
                     padding: 20px;
 
-                    .code-img{
+                    .code-img {
                         display: flex;
                         justify-content: center;
-                        img{
+
+                        img {
                             height: 40px;
                         }
                     }
                 }
             }
         }
-        .login-footer{
+
+        .login-footer {
             background: #fff;
         }
     }
