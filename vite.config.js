@@ -2,7 +2,7 @@
  * @Author: new-wang
  * @Date: 2022-10-25 10:09:45
  * @LastEditors: new-wang
- * @LastEditTime: 2022-11-08 11:37:54
+ * @LastEditTime: 2022-11-09 17:37:39
  * @Description: 
  */
 import { fileURLToPath, URL } from 'node:url'
@@ -13,6 +13,9 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  define:{
+    'process.env': process.env
+  },
   plugins: [vue(), vueJsx()],
   resolve: {
     alias: {

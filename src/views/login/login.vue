@@ -2,7 +2,7 @@
  * @Author: new-wang
  * @Date: 2022-11-07 16:57:48
  * @LastEditors: new-wang
- * @LastEditTime: 2022-11-09 16:25:06
+ * @LastEditTime: 2022-11-09 17:44:21
  * @Description: 登录页
 -->
 
@@ -61,6 +61,9 @@
 
 <script setup>
 import { onMounted, reactive, ref } from 'vue';
+import { userStore } from 'stores/user.js'
+
+const user = userStore()
 
 const formRef = ref()
 const codeImg = ref(null)
@@ -108,9 +111,10 @@ const rules = reactive({
     ]
 })
 const handleLogin = () => {
-    formRef.value.validate(valid => {
+    formRef.value.validate(async valid => {
         if (valid) {
-            console.log('valid :>> ', '验证通过');
+            console.log('123 :>> ', 123);
+            await user.login(form)
         }
     })
 }
